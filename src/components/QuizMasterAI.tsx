@@ -71,7 +71,7 @@ function parseQuizResponse(answer: string): QuizQuestion[] {
           explanation: (item?.explanation ?? "").toString().trim(),
         }))
         .filter(({ question, answer }) => question.length > 0 && answer.length > 0);
-    } catch (error) {
+    } catch (_error) {
       return [];
     }
   };
@@ -204,10 +204,10 @@ const QuizMasterAI = () => {
       setScore(0);
       setHasAnswered(false);
       setStatus("quiz");
-    } catch (error) {
-      console.error("Failed to start quiz:", error);
+    } catch (_error) {
+      console.error("Failed to start quiz:", _error);
       setErrorMessage(
-        error instanceof Error ? error.message : "Terjadi kesalahan saat memulai kuis."
+        _error instanceof Error ? _error.message : "Terjadi kesalahan saat memulai kuis."
       );
       setStatus("idle");
     }
@@ -365,6 +365,7 @@ const QuizMasterAI = () => {
 };
 
 export default QuizMasterAI;
+
 
 
 

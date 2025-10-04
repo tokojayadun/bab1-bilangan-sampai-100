@@ -17,7 +17,7 @@ const randomBetween = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
 const createDistinctNumbers = () => {
-  let first = randomBetween(11, 99);
+  const first = randomBetween(11, 99);
   let second = randomBetween(11, 99);
   while (second === first) {
     second = randomBetween(11, 99);
@@ -233,3 +233,4 @@ function NumberComparatorInner() {
 export default function NumberComparator() {
   return <NumberComparatorInner />;
 }
+
