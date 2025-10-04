@@ -18,10 +18,9 @@ function AuthGuard({ children }: AuthGuardProps) {
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
+  const token = searchParams.get("token");
 
   useEffect(() => {
-    const token = searchParams.get("token");
-
     const redirectToLogin = () => {
       router.replace("https://peserta-paham-pelajaran.netlify.app/");
     };
@@ -88,7 +87,7 @@ function AuthGuard({ children }: AuthGuardProps) {
     };
 
     void validateAccess();
-  }, [router, searchParams]);
+  }, [router, token]);
 
   if (loading) {
     return <div>Memverifikasi akses Anda...</div>;
