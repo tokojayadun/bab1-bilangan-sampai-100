@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -54,7 +54,7 @@ function NumberCard({
   card: NumberCardData;
   draggable?: boolean;
 }) {
-  const [{ isDragging }, dragRef] = useDrag<DragItem, void, { isDragging: boolean }>(
+  const [{ isDragging }, drag] = useDrag<DragItem, void, { isDragging: boolean }>(
     () => ({
       type: DRAG_TYPE,
       item: { cardId: card.id },
@@ -66,8 +66,11 @@ function NumberCard({
     [card.id, draggable],
   );
 
+  const elementRef = useRef<HTMLDivElement | null>(null);
+  drag(elementRef);
+
   return (
-    <div ref={draggable ? dragRef : undefined} className="w-full">
+    <div ref={draggable ? elementRef : undefined} className="w-full">
       <Card
         className={cn(
           "select-none text-center transition-all",
@@ -99,7 +102,7 @@ function DropZone({
   onAccept: (cardId: CardId) => void;
   cards: NumberCardData[];
 }) {
-  const [{ isOver, canDrop }, dropRef] = useDrop<
+  const [{ isOver, canDrop }, drop] = useDrop<
     DragItem,
     void,
     { isOver: boolean; canDrop: boolean }
@@ -119,6 +122,9 @@ function DropZone({
     }),
     [canAccept, onAccept],
   );
+
+  const dropRef = useRef<HTMLDivElement | null>(null);
+  drop(dropRef);
 
   return (
     <Card
@@ -335,5 +341,3 @@ export default function OddEvenSorter() {
     </DndProvider>
   );
 }
-
-

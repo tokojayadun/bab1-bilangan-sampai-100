@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -87,7 +87,7 @@ function BankBlock({
   label: string;
   canDrag: boolean;
 }) {
-  const [{ isDragging }, dragRef] = useDrag<DragItem, void, { isDragging: boolean }>(
+  const [{ isDragging }, drag] = useDrag<DragItem, void, { isDragging: boolean }>(
     () => ({
       type: DRAG_TYPES[blockType],
       item: { blockType },
@@ -99,9 +99,12 @@ function BankBlock({
     [blockType, canDrag],
   );
 
+  const elementRef = useRef<HTMLDivElement | null>(null);
+  drag(elementRef);
+
   return (
     <div
-      ref={dragRef}
+      ref={elementRef}
       className={cn(
         "flex cursor-grab flex-col items-center gap-2 rounded-md border bg-card p-3 text-center transition-all",
         !canDrag && "cursor-not-allowed opacity-70",
@@ -131,7 +134,7 @@ function WorkspaceArea({
   guessOnes: number;
   onDropBlock: (type: BlockType) => void;
 }) {
-  const [{ isOver, canDrop }, dropRef] = useDrop<
+  const [{ isOver, canDrop }, drop] = useDrop<
     DragItem,
     void,
     { isOver: boolean; canDrop: boolean }
@@ -152,6 +155,9 @@ function WorkspaceArea({
     [mode, onDropBlock],
   );
 
+  const dropRef = useRef<HTMLDivElement | null>(null);
+  drop(dropRef);
+
   const renderBlocks = () => {
     if (mode === "build") {
       return workspaceBlocks.map((block) =>
@@ -163,7 +169,7 @@ function WorkspaceArea({
       );
     }
 
-    const blocks: JSX.Element[] = [];
+    const blocks: ReactElement[] = [];
     for (let i = 0; i < guessTens; i += 1) {
       blocks.push(<TensBlock key={`guess-tens-${i}`} />);
     }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -76,7 +76,7 @@ function NumberCardDraggable({
   slotIndex?: number;
   disabled?: boolean;
 }) {
-  const [{ isDragging }, dragRef] = useDrag<DragItem, void, { isDragging: boolean }>(
+  const [{ isDragging }, drag] = useDrag<DragItem, void, { isDragging: boolean }>(
     () => ({
       type: DRAG_TYPE,
       item: { cardId, source, slotIndex },
@@ -88,8 +88,11 @@ function NumberCardDraggable({
     [cardId, source, slotIndex, disabled],
   );
 
+  const elementRef = useRef<HTMLDivElement | null>(null);
+  drag(elementRef);
+
   return (
-    <div ref={dragRef} className="w-full">
+    <div ref={elementRef} className="w-full">
       <Card
         className={cn(
           "select-none text-center transition-all",
@@ -132,7 +135,7 @@ function SortSlot({
   onDrop: (slotIndex: number, item: DragItem) => void;
   isInteractive: boolean;
 }) {
-  const [{ isOver, canDrop }, dropRef] = useDrop<
+  const [{ isOver, canDrop }, drop] = useDrop<
     DragItem,
     void,
     { isOver: boolean; canDrop: boolean }
@@ -152,6 +155,9 @@ function SortSlot({
     }),
     [index, onDrop, isInteractive],
   );
+
+  const dropRef = useRef<HTMLDivElement | null>(null);
+  drop(dropRef);
 
   return (
     <div
@@ -444,4 +450,3 @@ export default function NumberSorter() {
     </DndProvider>
   );
 }
-

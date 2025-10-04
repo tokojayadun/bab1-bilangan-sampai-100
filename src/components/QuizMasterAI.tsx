@@ -65,13 +65,15 @@ function parseQuizResponse(answer: string): QuizQuestion[] {
           : [];
 
       return list
-        .map((item) => ({
+        .map((item: Record<string, unknown>) => ({
           question: (item?.question ?? "").toString().trim(),
           answer: (item?.answer ?? "").toString().trim(),
           explanation: (item?.explanation ?? "").toString().trim(),
         }))
-        .filter(({ question, answer }) => question.length > 0 && answer.length > 0);
-    } catch {\r\n      return [];\r\n    }
+        .filter((entry: QuizQuestion) => entry.question.length > 0 && entry.answer.length > 0);
+    } catch {
+      return [];
+    }
   };
 
   const parsePipeLines = (): QuizQuestion[] => {
@@ -284,7 +286,7 @@ const QuizMasterAI = () => {
           <div className="flex flex-col items-center justify-center gap-3 py-8 text-center">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
             <p className="text-sm text-muted-foreground">
-              Kak AI sedang menyiapkan soal spesial untukmu�
+              Kak AI sedang menyiapkan soal spesial untukmu...
             </p>
           </div>
         )}
@@ -363,15 +365,3 @@ const QuizMasterAI = () => {
 };
 
 export default QuizMasterAI;
-
-
-
-
-
-
-
-
-
-
-
-
