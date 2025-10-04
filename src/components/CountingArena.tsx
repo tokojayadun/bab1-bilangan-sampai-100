@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -60,9 +60,12 @@ function DraggableApple({ id }: { id: string }) {
     [id],
   );
 
+  const elementRef = useRef<HTMLSpanElement | null>(null);
+  drag(elementRef);
+
   return (
     <span
-      ref={drag}
+      ref={elementRef}
       role="img"
       aria-label="apel"
       className={cn(
@@ -428,6 +431,9 @@ export default function CountingArena() {
     </DndProvider>
   );
 }
+
+
+
 
 
 
