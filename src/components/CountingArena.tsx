@@ -45,7 +45,7 @@ const createAppleIds = (count: number) =>
   });
 
 function DraggableApple({ id }: { id: string }) {
-  const [{ isDragging }, dragRef] = useDrag<
+  const [{ isDragging }, drag] = useDrag<
     DragItem,
     void,
     { isDragging: boolean }
@@ -62,7 +62,7 @@ function DraggableApple({ id }: { id: string }) {
 
   return (
     <span
-      ref={dragRef}
+      ref={drag}
       role="img"
       aria-label="apel"
       className={cn(
@@ -428,5 +428,6 @@ export default function CountingArena() {
     </DndProvider>
   );
 }
+
 
 
