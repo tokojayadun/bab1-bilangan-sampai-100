@@ -85,7 +85,7 @@ function BasketDropZone({
   basketIds: string[];
   onDropApple: (appleId: string) => void;
 }) {
-  const [{ isOver, canDrop }, dropRef] = useDrop<
+  const [{ isOver, canDrop }, drop] = useDrop<
     DragItem,
     void,
     { isOver: boolean; canDrop: boolean }
@@ -102,6 +102,9 @@ function BasketDropZone({
     }),
     [onDropApple],
   );
+
+  const dropZoneRef = useRef<HTMLDivElement | null>(null);
+  drop(dropZoneRef);
 
   const renderContent = () => {
     if (basketIds.length > 0) {
@@ -141,7 +144,7 @@ function BasketDropZone({
       </CardHeader>
       <CardContent>
         <div
-          ref={dropRef}
+          ref={dropZoneRef}
           className={cn(
             "flex min-h-[140px] w-full flex-wrap items-center justify-center gap-2 rounded-md border-2 border-dashed bg-muted/40 p-4 text-2xl transition-colors",
             isOver && canDrop
@@ -431,6 +434,15 @@ export default function CountingArena() {
     </DndProvider>
   );
 }
+
+
+
+
+
+
+
+
+
 
 
 
