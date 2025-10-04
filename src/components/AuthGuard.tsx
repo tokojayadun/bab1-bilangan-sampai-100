@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { type ReactNode, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -12,36 +13,82 @@ type AuthGuardProps = {
 };
 
 function AuthGuard({ children }: AuthGuardProps) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const babId = 4;
+  const searchParams = useSearchParams();\r\n  const router = useRouter();\r\n  const [isAuthorized, setIsAuthorized] = useState(false);\r\n  const [loading, setLoading] = useState(true);\r\n\r\n  const token = searchParams.get("token");\r\n\r\n  useEffect(() => {
 
-  useEffect(() => {
-    const verifySession = async () => {
+    const redirectToLogin = () => {
+      router.replace("https://peserta-paham-pelajaran.netlify.app/");
+    };
+
+    const validateAccess = async () => {
+      if (!token) {
+        redirectToLogin();
+        setIsAuthorized(false);
+        setLoading(false);
+        return;
+      }
+
       try {
-        const session = await supabase.auth.getSession();
-        setIsAuthenticated(Boolean(session.data.session));
+        const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+          access_token: token,
+          refresh_token: token,
+        });
+
+        if (sessionError) {
+          throw sessionError;
+        }
+
+        const user = sessionData.session?.user;
+        if (!user?.email) {
+          throw new Error("User tidak valid.");
+        }
+
+        const { data: pembeliData, error: pembeliError } = await supabase
+          .from("pembeli")
+          .select("id")
+          .eq("username", user.email)
+          .single();
+
+        if (pembeliError || !pembeliData?.id) {
+          throw pembeliError ?? new Error("Pembeli tidak ditemukan.");
+        }
+
+        const pembeliId = pembeliData.id;
+
+        const { data: pembelianData, error: pembelianError } = await supabase
+          .from("pembelian")
+          .select("*")
+          .eq("pembeli_id", pembeliId)
+          .eq("bab_id", babId);
+
+        if (pembelianError) {
+          throw pembelianError;
+        }
+
+        if (Array.isArray(pembelianData) && pembelianData.length > 0) {
+          setIsAuthorized(true);
+          return;
+        }
+
+        window.alert("Anda belum memiliki akses ke materi Bab ini.");
+        redirectToLogin();
       } catch (error) {
-        console.error("Supabase session check failed", error);
-        setIsAuthenticated(false);
+        console.error("Validasi akses gagal:", error);
+        window.alert("Terjadi kesalahan saat memverifikasi akses. Silakan login ulang.");
+        redirectToLogin();
       } finally {
         setLoading(false);
       }
     };
 
-    void verifySession();
-  }, []);
-
-  useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      window.location.href = "https://peserta-paham-pelajaran.netlify.app/";
-    }
-  }, [isAuthenticated, loading]);
+    void validateAccess();
+    }, [router, token]);
 
   if (loading) {
     return <div>Memverifikasi akses Anda...</div>;
   }
 
-  if (!isAuthenticated) {
+  if (!isAuthorized) {
     return <div>Akses ditolak. Anda akan dialihkan ke halaman login...</div>;
   }
 
@@ -49,3 +96,4 @@ function AuthGuard({ children }: AuthGuardProps) {
 }
 
 export default AuthGuard;
+
