@@ -14,7 +14,13 @@ type AuthGuardProps = {
 
 function AuthGuard({ children }: AuthGuardProps) {
   const babId = 4;
-  const searchParams = useSearchParams();\r\n  const router = useRouter();\r\n  const [isAuthorized, setIsAuthorized] = useState(false);\r\n  const [loading, setLoading] = useState(true);\r\n\r\n  const token = searchParams.get("token");\r\n\r\n  useEffect(() => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const token = searchParams.get("token");
 
     const redirectToLogin = () => {
       router.replace("https://peserta-paham-pelajaran.netlify.app/");
@@ -82,7 +88,7 @@ function AuthGuard({ children }: AuthGuardProps) {
     };
 
     void validateAccess();
-    }, [router, token]);
+  }, [router, searchParams]);
 
   if (loading) {
     return <div>Memverifikasi akses Anda...</div>;
@@ -96,4 +102,3 @@ function AuthGuard({ children }: AuthGuardProps) {
 }
 
 export default AuthGuard;
-
