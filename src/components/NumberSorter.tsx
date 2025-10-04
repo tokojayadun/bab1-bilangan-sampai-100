@@ -5,10 +5,12 @@ import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+// HAPUS VERSI YANG LAMA DAN GANTI DENGAN INI
 import {
   Card,
   CardContent,
-  CardDescription,\r\n  CardHeader,
+  CardDescription,
+  CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
